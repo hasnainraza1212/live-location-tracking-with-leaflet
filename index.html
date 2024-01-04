@@ -17,11 +17,13 @@
         #map {
             height: 100vh;
             border-radius: 8px;
+            position: relative;
         }
 
         #location-info {
             position: absolute;
             top: 20px;
+            z-index: 100000;
             left: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
@@ -55,11 +57,12 @@
 </head>
 
 <body>
-    <div id="map"></div>
-    <div id="location-info">
-        <h1>Live Location Tracker</h1>
-        <p id="location">Fetching location...</p>
-        <button id="request-permission" onclick="requestPermission()">Allow Location Access</button>
+    <div id="map">
+        <div id="location-info">
+            <h1 id="main-heading">Live Location Tracker</h1>
+            <p id="location">waiting for location access...</p>
+            <button id="request-permission" onclick="requestPermission()">Allow Location Access</button>
+        </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -72,8 +75,14 @@
             window.requestPermission = () => {
                 if (navigator.geolocation) {
 
-                    console.log(navigator.geolocation)
                     navigator.geolocation.getCurrentPosition(successHandler, errorHandler);
+                    document.getElementById("request-permission").style.display="none"
+                    document.getElementById("main-heading").innerText="Live Location"
+                    document.getElementById("location-info").style.left="50px"
+                    document.getElementById("location-info").style.top="10px"
+
+
+
                 } else {
                     console.log(navigator.geolocation)
                     console.error('Geolocation API is not supported in this browser.');
@@ -88,20 +97,9 @@
                 locationElement.innerHTML = `<p>Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}</p>`;
 
                 // Initialize Leaflet map
-                console.log("mapElement")
-                console.log(mapElement)
-                console.log("map")
-                console.log(map)
-                console.log("mapElement.map")
-                console.log(mapElement.map)
                 if (!mapElement.map) {
-                    const map = L.map('map').setView([latitude, longitude], 15);
-                    console.log("mapElement")
-                    console.log(mapElement)
-                    console.log("map")
-                    console.log(map)
-                    console.log("mapElement.map")
-                    console.log(mapElement.map)
+                    const map = L.map('map').setView([latitude, longitude],100);
+               
 
                     // Add OpenStreetMap tile layer
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
