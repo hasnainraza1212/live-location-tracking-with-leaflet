@@ -2,122 +2,137 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Car Location Tracker</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Location Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-    #map {
-      height: 100vh;
-      border-radius: 8px;
-    }
+        #map {
+            height: 100vh;
+            border-radius: 8px;
+        }
 
-    #location-info {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        #location-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
 
-    p {
-      margin: 5px 0;
-    }
+        p {
+            margin: 5px 0;
+        }
 
-    #request-permission {
-      margin-top: 10px;
-      padding: 8px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        #request-permission {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    #request-permission:hover {
-      background-color: #45a049;
-    }
-  </style>
+        #request-permission:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 
 <body>
-  <div id="map"></div>
-  <div id="location-info">
-    <h1>Car Location Tracker</h1>
-    <p id="location">Fetching location...</p>
-    <button id="request-permission" onclick="requestPermission()">Allow Location Access</button>
-  </div>
+    <div id="map"></div>
+    <div id="location-info">
+        <h1>Car Location Tracker</h1>
+        <p id="location">Fetching location...</p>
+        <button id="request-permission" onclick="requestPermission()">Allow Location Access</button>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const locationElement = document.getElementById('location');
+            const mapElement = document.getElementById('map');
+            let marker;
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const locationElement = document.getElementById('location');
-      const mapElement = document.getElementById('map');
-      let marker;
+            // Function to request location permission
+            window.requestPermission = () => {
+                if (navigator.geolocation) {
 
-      // Function to request location permission
-      window.requestPermission = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(successHandler, errorHandler);
-        } else {
-          console.error('Geolocation API is not supported in this browser.');
-        }
-      };
+                    console.log(navigator.geolocation)
+                    navigator.geolocation.getCurrentPosition(successHandler, errorHandler);
+                } else {
+                    console.log(navigator.geolocation)
+                    console.error('Geolocation API is not supported in this browser.');
+                }
+            };
 
-      // Function to handle successful geolocation updates
-      const successHandler = (position) => {
-        const { latitude, longitude } = position.coords;
+            // Function to handle successful geolocation updates
+            const successHandler = (position) => {
+                const { latitude, longitude } = position.coords;
 
-        // Update location information
-        locationElement.innerHTML = `<p>Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}</p>`;
+                // Update location information
+                locationElement.innerHTML = `<p>Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}</p>`;
 
-        // Initialize Leaflet map
-        if (!mapElement.map) {
-          const map = L.map('map').setView([latitude, longitude], 15);
+                // Initialize Leaflet map
+                console.log("mapElement")
+                console.log(mapElement)
+                console.log("map")
+                console.log(map)
+                console.log("mapElement.map")
+                console.log(mapElement.map)
+                if (!mapElement.map) {
+                    const map = L.map('map').setView([latitude, longitude], 15);
+                    console.log("mapElement")
+                    console.log(mapElement)
+                    console.log("map")
+                    console.log(map)
+                    console.log("mapElement.map")
+                    console.log(mapElement.map)
 
-          // Add OpenStreetMap tile layer
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-          }).addTo(map);
+                    // Add OpenStreetMap tile layer
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
 
-          // Create a marker for the user's location
-          marker = L.marker([latitude, longitude]).addTo(map);
+                    // Create a marker for the user's location
+                    marker = L.marker([latitude, longitude]).addTo(map);
 
-          // Save the map and marker instances
-          mapElement.map = map;
-          mapElement.marker = marker;
-        } else {
-          // Update the existing marker position
-          mapElement.marker.setLatLng([latitude, longitude]).update();
-        }
-      };
+                    // Save the map and marker instances
+                    mapElement.map = map;
+                    mapElement.marker = marker;
+                } else {
+                    // Update the existing marker position
+                    mapElement.marker.setLatLng([latitude, longitude]).update();
+                }
+            };
 
-      // Function to handle errors in geolocation
-      const errorHandler = (error) => {
-        console.error(`Error getting geolocation: ${error.message}`);
-      };
+            // Function to handle errors in geolocation
+            const errorHandler = (error) => {
+                console.error(`Error getting geolocation: ${error.message}`);
+            };
 
-      // Event listener for the button click
-      document.getElementById('request-permission').addEventListener('click', requestPermission);
+            // Event listener for the button click
+            document.getElementById('request-permission').addEventListener('click', requestPermission);
 
-      // You can choose whether to automatically ask for permission on load or not.
-      // Uncomment the line below if you want to request permission on load.
-      // requestPermission();
-    });
-  </script>
+            // You can choose whether to automatically ask for permission on load or not.
+            // Uncomment the line below if you want to request permission on load.
+            // requestPermission();
+        });
+    </script>
 </body>
 
 </html>
