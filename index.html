@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Location Tracker</title>
+    <link rel="icon" href="/map.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
@@ -22,13 +23,16 @@
 
         #location-info {
             position: absolute;
-            top: 20px;
+            top: calc(50% - 55px);
+            text-align: center;
             z-index: 100000;
-            left: 20px;
+            left: calc(50% - 150px);
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
             border-radius: 8px;
+            width: 300px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: 110px;
         }
 
         h1 {
@@ -48,8 +52,10 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            margin-top: 10px;
         }
-
         #request-permission:hover {
             background-color: #45a049;
         }
@@ -80,9 +86,10 @@
                     document.getElementById("main-heading").innerText="Live Location"
                     document.getElementById("location-info").style.left="50px"
                     document.getElementById("location-info").style.top="10px"
-
-
-
+                    document.getElementById("location-info").style.textAlign="left"
+                    document.getElementById("location-info").style.height="auto"
+                    document.getElementById("location-info").style.background="white"
+                    document.getElementById("location-info").style.width="auto"
                 } else {
                     console.log(navigator.geolocation)
                     console.error('Geolocation API is not supported in this browser.');
