@@ -81,7 +81,7 @@
             window.requestPermission = () => {
                 if (navigator.geolocation) {
 
-                    navigator.geolocation.getCurrentPosition(successHandler, errorHandler);
+                    navigator.geolocation.watchPosition(successHandler, errorHandler);
                     document.getElementById("request-permission").style.display="none"
                     document.getElementById("main-heading").innerText="Live Location"
                     document.getElementById("location-info").style.left="50px"
