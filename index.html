@@ -12,7 +12,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
         }
 
         #map {
@@ -23,16 +22,16 @@
 
         #location-info {
             position: absolute;
-            top: calc(50% - 55px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
             z-index: 100000;
-            left: calc(50% - 150px);
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
             border-radius: 8px;
-            width: 300px;
+            max-width: 90%;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            height: 110px;
         }
 
         h1 {
@@ -54,10 +53,27 @@
             cursor: pointer;
             display: block;
             margin: 0 auto;
+        }
+        #end-tracking{
+            background-color: red;
             margin-top: 10px;
+            padding: 8px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            display: none;
         }
         #request-permission:hover {
             background-color: #45a049;
+        }
+
+        /* Media query for smaller screens (e.g., mobile devices) */
+        @media (max-width: 768px) {
+            #location-info {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -68,28 +84,42 @@
             <h1 id="main-heading">Live Location Tracker</h1>
             <p id="location">waiting for location access...</p>
             <button id="request-permission" onclick="requestPermission()">Allow Location Access</button>
+            <button id="end-tracking" onclick="endTrackingSession()">End Tracking</button>
+
         </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        let watchId = ""
         document.addEventListener('DOMContentLoaded', () => {
             const locationElement = document.getElementById('location');
             const mapElement = document.getElementById('map');
             let marker;
-
+            window.endTrackingSession=()=>{
+                    if (navigator.geolocation) {
+                        watchId && navigator.geolocation.clearWatch(watchId)
+                        window.location.reload()
+                    }
+            }
             // Function to request location permission
-            window.requestPermission = () => {
+            window.requestPermission =async () => {
                 if (navigator.geolocation) {
 
-                    navigator.geolocation.watchPosition(successHandler, errorHandler);
+                   const watchId= await navigator.geolocation.watchPosition(successHandler, errorHandler);
                     document.getElementById("request-permission").style.display="none"
+                    document.getElementById("end-tracking").style.display="block"
+
                     document.getElementById("main-heading").innerText="Live Location"
-                    document.getElementById("location-info").style.left="50px"
-                    document.getElementById("location-info").style.top="10px"
+                    document.getElementById("location-info").style.left="0px"
+                    document.getElementById("location-info").style.top="0px"
+                    document.getElementById("location-info").style.transform="translate(0,0)"
+                    document.getElementById("location-info").style.marginTop="11px"
+                    document.getElementById("location-info").style.marginLeft="55px"
+                    document.getElementById("location-info").style.position="relative"
                     document.getElementById("location-info").style.textAlign="left"
                     document.getElementById("location-info").style.height="auto"
                     document.getElementById("location-info").style.background="white"
-                    document.getElementById("location-info").style.width="auto"
+                    document.getElementById("location-info").style.width="fit-content"
                 } else {
                     console.log(navigator.geolocation)
                     console.error('Geolocation API is not supported in this browser.');
@@ -105,7 +135,7 @@
 
                 // Initialize Leaflet map
                 if (!mapElement.map) {
-                    const map = L.map('map').setView([latitude, longitude],100);
+                    const map = L.map('map').setView([latitude, longitude],9);
                
 
                     // Add OpenStreetMap tile layer
